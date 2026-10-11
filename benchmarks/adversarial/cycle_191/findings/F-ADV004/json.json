@@ -1,0 +1,13 @@
+{
+  "id": "F-ADV-004",
+  "severity": "LOW",
+  "file": "README.md",
+  "line": 99,
+  "function": null,
+  "surface": "README",
+  "min_input": "README line 99: '270 tests across 12 files'",
+  "stack": "n/a (documentation drift; verified by grep + pytest --collect-only)",
+  "description": "README line 99 claims '270 tests across 12 files' but actual is 294 tests across 11 files (24 tests off, 1 file off). Both numbers wrong. F-QA-R01 already flagged this in QA rerun. Doc-only fix: s/270 tests across 12 files/294 tests across 11 files/.",
+  "status": "VERIFIED",
+  "source": "T01 manual audit + F-QA-R01 from QA rerun"
+}

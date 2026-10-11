@@ -1,0 +1,6 @@
+No exception. Misleading:
+  python -c "from htdate_pure import parse; print(parse('Sun, 06 Nov 1994 08:49:60 GMT').second)"
+  0  (looks like a regular second, not a leap second)
+
+  repr() also hides the semantic:
+  repr(_LeapSecondDatetime(1994, 11, 6, 8, 50, 0, tzinfo=datetime.timezone.utc))

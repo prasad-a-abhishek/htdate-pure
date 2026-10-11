@@ -1,0 +1,13 @@
+{
+  "id": "F-ADV-006",
+  "severity": "LOW",
+  "file": "src/htdate_pure/_format.py",
+  "line": 95,
+  "function": "format",
+  "surface": "format",
+  "min_input": "datetime(123, 6, 15, 12, 30, 45, tzinfo=timezone.utc)",
+  "stack": "Traceback (most recent call last):\n  File \"<harness>\", line 1, in <module>\n  File \"<root/projects/htdate-pure/src/htdate_pure/_parser.py>\", in _parse_imf\n  ...\n  File \"<root/projects/htdate-pure/src/htdate_pure/_parser.py>\", line 253, in _parse_imf\n    raise InvalidFormat(year_raw, reason=\"year_out_of_range\")\nhtdate_pure.exceptions.InvalidFormat: '0123': year_out_of_range\n",
+  "description": "format() emits years outside [1900, 2100) without complaint (4-digit zero-padded), but parse() rejects the same. Round-trip non-closed outside the parser's safety range. Verified for 8 years: 1, 123, 1500, 1899 all fail to round-trip; 1900/2099 round-trip; 2100, 9999 fail. LOW because HTTP-date is overwhelmingly in range; no formal round-trip contract documented.",
+  "status": "VERIFIED",
+  "source": "T01 manual audit; live-verified at HEAD 14295be"
+}

@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "<string>", line 2, in <module>
+  File "/root/projects/htdate-pure/src/htdate_pure/_format.py", line 108, in to_imf
+    return format(dt)
+  File "/root/projects/htdate-pure/src/htdate_pure/_format.py", line 88, in format
+    _validate_tzinfo(dt)
+  File "/root/projects/htdate-pure/src/htdate_pure/_format.py", line 33, in _validate_tzinfo
+    if dt.tzinfo is None:
+AttributeError: 'str' object has no attribute 'tzinfo'

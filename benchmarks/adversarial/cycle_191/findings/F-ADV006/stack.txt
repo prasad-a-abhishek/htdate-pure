@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "<harness>", line 1, in <module>
+  File "<root/projects/htdate-pure/src/htdate_pure/_parser.py>", line 253, in _parse_imf
+    raise InvalidFormat(year_raw, reason="year_out_of_range")
+htdate_pure.exceptions.InvalidFormat: '0123': year_out_of_range

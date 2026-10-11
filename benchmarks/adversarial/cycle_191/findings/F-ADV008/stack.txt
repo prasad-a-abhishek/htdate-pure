@@ -1,0 +1,3 @@
+No exception. Bounded linear rejection.
+  python -c "import time; from htdate_pure import parse; t=time.monotonic(); parse('Sun, 06 Nov 1994 08:49:37 GMT ' * 1_000_000); print(time.monotonic()-t)"
+  ~0.39-0.54s

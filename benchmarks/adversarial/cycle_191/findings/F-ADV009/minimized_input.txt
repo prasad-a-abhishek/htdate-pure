@@ -1,0 +1,10 @@
+# F-ADV-009: spec drift — no input needed.
+#
+# spec.md §13 line ~417 makes an impossible promise:
+#   parse("Sun, 06 Nov 1994 08:49:60 GMT") -> #   datetime(1994, 11, 6, 8, 49, 60, tzinfo=utc)
+#
+# stdlib datetime refuses second=60 (ValueError: second must be in 0..59).
+# Implementation returns _LeapSecondDatetime(1994, 11, 6, 8, 50, 0, tzinfo=utc)
+# (post-rollover; flag via is_leap_second()).
+
+n/a

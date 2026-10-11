@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "<root/projects/htdate-pure/src/htdate_pure/_parser.py", line 223, in _parse_imf
+    parts = text.split()
+AttributeError: (none — parses successfully when RFC requires reject)
+
+# NBSP / EM SPACE / IDEOGRAPHIC SPACE silently split via str.split()
+# at _parser.py:223, 297, 374 (all three dialect parsers).

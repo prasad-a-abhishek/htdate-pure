@@ -1,0 +1,8 @@
+# F-ADV-004: documentation drift — no input needed.
+#
+# README line 99:
+#   '- 270 tests across 12 files covering happy path, ...'
+# Actual at commit 14295be:
+#   294 tests across 11 files
+
+n/a

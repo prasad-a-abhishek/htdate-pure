@@ -1,0 +1,13 @@
+{
+  "id": "F-ADV-010",
+  "severity": "INFO",
+  "file": "htdate-parse console script",
+  "line": null,
+  "function": "argv parsing",
+  "surface": "cli",
+  "min_input": "before\\x00after (argv), or 1MB argv string",
+  "stack": "# Python interpreter blocks NUL byte in argv before any application code:\nValueError: embedded null byte\n# OS blocks >1MB argv (E2BIG):\nOSError: [Errno 7] Argument list too long\n",
+  "description": "NUL byte in argv aborts at the Python interpreter (returns 'embedded null byte') before any application code runs. 1MB argv aborts at the OS (returns 'Argument list too long'). Both are interpreter/OS-level blocks, not application bugs. Documented for completeness.",
+  "status": "VERIFIED",
+  "source": "T01 manual audit; live-verified at HEAD 14295be"
+}

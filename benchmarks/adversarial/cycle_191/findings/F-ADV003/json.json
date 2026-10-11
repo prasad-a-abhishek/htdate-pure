@@ -1,0 +1,13 @@
+{
+  "id": "F-ADV-003",
+  "severity": "MEDIUM",
+  "file": "src/htdate_pure/_parser.py",
+  "line": 223,
+  "function": "_parse_imf",
+  "surface": "parse",
+  "min_input": "Sun,\u00a006 Nov 1994 08:49:37 GMT",
+  "stack": "Traceback (most recent call last):\n  File \"<root/projects/htdate-pure/src/htdate_pure/_parser.py\", line 223, in _parse_imf\n    parts = text.split()\nAttributeError: (none \u2014 parses successfully when RFC requires reject)\n\n# NBSP / EM SPACE / IDEOGRAPHIC SPACE silently split via str.split()\n# at _parser.py:223, 297, 374 (all three dialect parsers).\n",
+  "description": "Unicode whitespace (NBSP U+00A0, EM SPACE U+2003, IDEOGRAPHIC SPACE U+3000) is silently accepted in place of RFC 9110 SP. Verified live across all 5 documented positions (after comma, in date, leading, trailing, in weekday) and across all 3 dialects (imf/rfc850/asctime). text.split() with no sep argument splits on any Unicode whitespace run, and _strip_trailing_ws only knows ASCII whitespace. RFC 9110 \u00a75.1.1 grammar defines SP as %x20 (single ASCII space). Interop gap vs httpdate which DOES reject non-ASCII whitespace.",
+  "status": "VERIFIED",
+  "source": "T01 manual audit; live-verified at HEAD 14295be"
+}

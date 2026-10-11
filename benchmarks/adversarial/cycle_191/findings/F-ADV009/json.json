@@ -1,0 +1,13 @@
+{
+  "id": "F-ADV-009",
+  "severity": "INFO",
+  "file": "spec.md",
+  "line": 417,
+  "function": null,
+  "surface": "spec",
+  "min_input": "spec \u00a713: parse(\"Sun, 06 Nov 1994 08:49:60 GMT\") -> datetime(1994, 11, 6, 8, 49, 60, tzinfo=utc)",
+  "stack": "# stdlib datetime.__init__ rejects second=60 outright\npython -c \"from datetime import datetime, timezone; datetime(1994, 11, 6, 8, 49, 60, tzinfo=timezone.utc)\"\n# -> ValueError: second must be in 0..59\n",
+  "description": "spec.md \u00a713 promises parse(':60') -> datetime(..., 8, 49, 60, ...), which stdlib datetime (both __init__ and C __new__) rejects. The implementation chose the correct workaround (_LeapSecondDatetime wrapping the next-minute instant). INFO; spec needs an edit to match reality.",
+  "status": "VERIFIED",
+  "source": "T01 manual audit; live-verified at HEAD 14295be"
+}

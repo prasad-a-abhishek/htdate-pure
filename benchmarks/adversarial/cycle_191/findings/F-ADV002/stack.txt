@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "<root/projects/htdate-pure/src/htdate_pure/_parser.py", line 284, in _parse_imf
+    _check_weekday(dt.year, dt.month, dt.day, WEEKDAY_3_TO_INDEX[weekday], text)
+  File "<root/projects/htdate-pure/src/htdate_pure/_parser.py", line 119, in _check_weekday
+    raise InvalidFormat(original, reason="weekday_mismatch")
+htdate_pure.exceptions.InvalidFormat: 'Thu, 30 Jun 1994 23:59:60 GMT': weekday_mismatch

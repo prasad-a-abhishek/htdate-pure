@@ -1,0 +1,8 @@
+# F-ADV-001 minimized reproducer (T03 fuzz iteration 4)
+#
+# A literal IMF-fixdate string passed as `dt` to to_imf() crashes
+# at _format.py:33 with AttributeError. The string happens to be
+# the canonical RFC example, but ANY non-datetime (None, int, list,
+# object(), bytes) triggers the same crash.
+
+Sun, 06 Nov 1994 08:49:37 GMT

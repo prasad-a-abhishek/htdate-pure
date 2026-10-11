@@ -1,0 +1,8 @@
+n/a (doc drift)
+Verified via:
+  $ grep -n '270 tests' README.md
+  99: - 270 tests across 12 files covering happy path, canonical vectors, ...
+  $ pytest --collect-only -q | tail -1
+  294 tests collected (0.01s)
+  $ ls tests/test_*.py | wc -l
+  11

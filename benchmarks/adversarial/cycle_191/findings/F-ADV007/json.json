@@ -1,0 +1,13 @@
+{
+  "id": "F-ADV-007",
+  "severity": "LOW",
+  "file": "src/htdate_pure/_parser.py",
+  "line": 64,
+  "function": "_LeapSecondDatetime._wrap",
+  "surface": "parse",
+  "min_input": "Sun, 06 Nov 1994 08:49:60 GMT",
+  "stack": "# No exception \u2014 parser returns _LeapSecondDatetime with .second=0\n# instead of .second=60. is_leap_second() is the only introspection.\npython -c \"from htdate_pure import parse, is_leap_second; dt=parse('Sun, 06 Nov 1994 08:49:60 GMT'); print(dt.second, is_leap_second(dt))\"\n# -> 0 True\n",
+  "description": "_LeapSecondDatetime inherits from datetime; .second reads as the post-rollover 0, not the literal 60. Callers checking dt.second == 60 will never see the leap-second flag. README documents is_leap_second() as the right API, but the class doesn't expose a .second==60 shortcut, and __repr__ hides the semantic. Fix is documentation only (or override .second \u2014 at risk of breaking datetime invariants).",
+  "status": "VERIFIED",
+  "source": "T01 manual audit; live-verified at HEAD 14295be"
+}

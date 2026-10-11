@@ -1,0 +1,9 @@
+n/a (doc drift)
+Verified via:
+  $ grep -n 'clamp' README.md
+  83:  our leap-second policy is to clamp `:60` to `:59` with a warning
+  94:  Leap-second `:60` is detected via `is_leap_second()` and clamps to `:59`
+  95:  with a `RuntimeWarning`
+
+  python -W error -c "from htdate_pure import parse, is_leap_second; dt=parse('Sun, 06 Nov 1994 08:49:60 GMT'); print(dt, is_leap_second(dt))"
+  -> 1994-11-06 08:50:00+00:00 True (no warnings raised even with -W error)

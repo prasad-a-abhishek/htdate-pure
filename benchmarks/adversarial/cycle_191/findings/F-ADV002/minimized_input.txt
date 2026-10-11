@@ -1,0 +1,12 @@
+# F-ADV-002 minimized reproducer (any end-of-day UTC leap-second)
+#
+# 7 verified cases — all rejected with weekday_mismatch at _parser.py:284:
+#   Thu, 30 Jun 1994 23:59:60 GMT   (rolls to 1994-07-01 Fri)
+#   Sun, 31 Dec 1995 23:59:60 GMT   (rolls to 1996-01-01 Mon)
+#   Sat, 31 Dec 2005 23:59:60 GMT   (rolls to 2006-01-01 Sun)
+#   Wed, 31 Dec 2008 23:59:60 GMT   (rolls to 2009-01-01 Thu)
+#   Sat, 30 Jun 2012 23:59:60 GMT   (rolls to 2012-07-01 Sun)
+#   Tue, 30 Jun 2015 23:59:60 GMT   (rolls to 2015-07-01 Wed)
+#   Sat, 31 Dec 2016 23:59:60 GMT   (rolls to 2017-01-01 Sun)
+
+Thu, 30 Jun 1994 23:59:60 GMT

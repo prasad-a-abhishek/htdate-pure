@@ -1,0 +1,13 @@
+{
+  "id": "F-ADV-005",
+  "severity": "LOW",
+  "file": "README.md",
+  "line": 83,
+  "function": null,
+  "surface": "README",
+  "min_input": "README lines 83, 94-95: 'clamp `:60` to `:59` with a `RuntimeWarning`'",
+  "stack": "n/a (documentation drift; verified by grep + warnings.catch_warnings)",
+  "description": "README claims `:60` is clamped to `:59` with a RuntimeWarning. Actual behavior: clamp to `:00` of next minute, NO warning emitted (verified via warnings.catch_warnings(record=True)). F-QA-R02 from QA rerun. Doc-only fix: s/clamp `:60` to `:59` with a warning/clamp `:60` to `:00` of the next minute (no warning)/.",
+  "status": "VERIFIED",
+  "source": "T01 manual audit + F-QA-R02 from QA rerun"
+}

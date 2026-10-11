@@ -1,0 +1,9 @@
+# F-ADV-007 minimized reproducer
+#
+from htdate_pure import parse, is_leap_second
+dt = parse('Sun, 06 Nov 1994 08:49:60 GMT')
+# dt.second == 0     (post-rollover, NOT the literal 60)
+# dt.minute == 50    (post-rollover minute)
+# is_leap_second(dt) == True  (only honest signal)
+
+Sun, 06 Nov 1994 08:49:60 GMT

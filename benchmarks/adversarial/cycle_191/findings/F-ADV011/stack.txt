@@ -1,0 +1,8 @@
+$ htdate-parse $'\x1b[31mRED\x1b[0m'
+stderr: '\x1b[31mRED\x1b[0m': no_matching_dialect
+rc=2
+
+Note: repr() in error path escapes \x1b as the literal 4-char sequence
+backslash-x-1-b. A real terminal will display '\\x1b[31mRED\\x1b[0m' as
+literal text, not interpret the escape. No log-injection / terminal-injection
+vector. Safe by construction.

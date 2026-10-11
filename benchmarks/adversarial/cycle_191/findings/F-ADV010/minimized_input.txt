@@ -1,0 +1,9 @@
+# F-ADV-010 minimized reproducer
+#
+# NUL byte argv (Python blocks at interpreter level):
+htdate-parse $'before\x00after'
+# -> ValueError: embedded null byte (no app code runs)
+
+# 1MB argv (OS blocks at E2BIG):
+python -c "import sys; sys.argv = ['htdate-parse'] + ['x' * (1 << 20)]"
+# -> OSError: [Errno 7] Argument list too long (no app code runs)

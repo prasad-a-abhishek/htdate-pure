@@ -1,0 +1,7 @@
+# F-ADV-008 minimized reproducer (33MB repeated header)
+#
+from htdate_pure import parse
+big = 'Sun, 06 Nov 1994 08:49:37 GMT ' * 1_000_000
+# 33MB string
+parse(big)
+# -> InvalidFormat: no_matching_dialect (in ~0.4s, no crash)

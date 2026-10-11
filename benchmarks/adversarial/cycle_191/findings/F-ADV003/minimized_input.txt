@@ -1,0 +1,12 @@
+# F-ADV-003 minimized reproducer (any Unicode whitespace in place of SP)
+#
+# 5 verified positions (NBSP, EM SPACE, IDEOGRAPHIC SPACE all behave the same):
+#   Sun, 06 Nov 1994 08:49:37 GMT        # NBSP after comma
+#   Sun, 06 Nov 1994 08:49:37 GMT        # NBSP in date
+#    Sun, 06 Nov 1994 08:49:37 GMT        # leading NBSP
+#   Sun, 06 Nov 1994 08:49:37 GMT        # trailing EM SPACE
+#   Sun, 06 Nov 1994 08:49:37 GMT　       # trailing IDEO SPACE
+#
+# NBSP = \u00a0, EM SPACE = \u2003, IDEOGRAPHIC SPACE = \u3000
+
+Sun, 06 Nov 1994 08:49:37 GMT

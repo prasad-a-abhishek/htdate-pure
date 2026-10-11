@@ -1,0 +1,2 @@
+python -c "from datetime import datetime, timezone; datetime(1994, 11, 6, 8, 49, 60, tzinfo=timezone.utc)"
+ValueError: second must be in 0..59

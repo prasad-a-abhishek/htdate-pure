@@ -1,0 +1,5 @@
+python -c "from htdate_pure import parse_dialect; print(parse_dialect('Sunday, 06-Nov-94 08:49:37 GMT extra'))"
+None
+
+python -c "from htdate_pure import parse; parse('Sunday, 06-Nov-94 08:49:37 GMT extra')"
+InvalidFormat: 'Sunday, 06-Nov-94 08:49:37 GMT extra': no_matching_dialect

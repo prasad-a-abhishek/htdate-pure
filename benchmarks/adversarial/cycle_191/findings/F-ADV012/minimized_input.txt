@@ -1,0 +1,7 @@
+# F-ADV-012 minimized reproducer (trailing token)
+#
+from htdate_pure import parse_dialect, parse
+parse_dialect('Sunday, 06-Nov-94 08:49:37 GMT extra')
+# -> None  (grammar-strict)
+parse('Sunday, 06-Nov-94 08:49:37 GMT extra')
+# -> InvalidFormat: no_matching_dialect  (agrees)

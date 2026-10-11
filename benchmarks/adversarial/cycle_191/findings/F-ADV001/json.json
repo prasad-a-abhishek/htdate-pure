@@ -1,0 +1,13 @@
+{
+  "id": "F-ADV-001",
+  "severity": "MEDIUM",
+  "file": "src/htdate_pure/_format.py",
+  "line": 33,
+  "function": "_validate_tzinfo",
+  "surface": "format",
+  "min_input": "Sun, 06 Nov 1994 08:49:37 GMT",
+  "stack": "Traceback (most recent call last):\n  File \"<string>\", line 2, in <module>\n  File \"/root/projects/htdate-pure/src/htdate_pure/_format.py\", line 108, in to_imf\n    return format(dt)\n  File \"/root/projects/htdate-pure/src/htdate_pure/_format.py\", line 88, in format\n    _validate_tzinfo(dt)\n  File \"/root/projects/htdate-pure/src/htdate_pure/_format.py\", line 33, in _validate_tzinfo\n    if dt.tzinfo is None:\nAttributeError: 'str' object has no attribute 'tzinfo'\n",
+  "description": "format(dt) and to_imf(dt) raise AttributeError on non-datetime inputs (None, str, int, list, object(), bytes). README lines 195-199 promise InvalidFormat/ValueError for malformed inputs; AttributeError breaks that contract. T03 format harness reproduced at iter 4 with payload 'Sun, 06 Nov 1994 08:49:37 GMT' (an IMF-fixdate string passed where a datetime is expected). Verified live against HEAD at commit 14295be: all 7 type-error variants (None/int/str/list/object/bytes + T03 payload) raise AttributeError at _format.py:33. Control: legitimate UTC datetime still formats correctly. Fix is a 3-line isinstance check at the top of _validate_tzinfo (or in format()) mirroring _require_text in _parser.py.",
+  "status": "VERIFIED",
+  "source": "T01 manual audit + T03 fuzz reproduction at 14295be"
+}

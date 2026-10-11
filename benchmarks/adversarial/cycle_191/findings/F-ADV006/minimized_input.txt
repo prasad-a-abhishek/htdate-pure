@@ -1,0 +1,8 @@
+# F-ADV-006 minimized reproducer (year outside [1900, 2100))
+#
+from datetime import datetime, timezone
+from htdate_pure import format, parse
+fmt = format(datetime(123, 6, 15, 12, 30, 45, tzinfo=timezone.utc))
+# fmt = 'Tue, 15 Jun 0123 12:30:45 GMT'
+parse(fmt)
+# -> htdate_pure.exceptions.InvalidFormat: '0123': year_out_of_range

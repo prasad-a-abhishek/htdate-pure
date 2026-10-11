@@ -1,0 +1,9 @@
+# F-ADV-005: documentation drift — no input needed.
+#
+# README lines 83, 94-95 mention 'clamp `:60` to `:59` with a warning'.
+# Actual at commit 14295be:
+#   parse('Sun, 06 Nov 1994 08:49:60 GMT') -> 1994-11-06 08:50:00+00:00
+#   is_leap_second(...) = True
+#   warnings emitted: 0
+
+n/a

@@ -1,0 +1,7 @@
+# F-ADV-011 minimized reproducer
+#
+htdate-parse $'\x1b[31mRED\x1b[0m'
+# stderr: '\x1b[31mRED\x1b[0m': no_matching_dialect  (literal 4-char \x1b)
+# rc=2
+
+\x1b[31mRED\x1b[0m

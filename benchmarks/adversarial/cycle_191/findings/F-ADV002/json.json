@@ -1,0 +1,13 @@
+{
+  "id": "F-ADV-002",
+  "severity": "MEDIUM",
+  "file": "src/htdate_pure/_parser.py",
+  "line": 284,
+  "function": "_parse_imf",
+  "surface": "parse",
+  "min_input": "Thu, 30 Jun 1994 23:59:60 GMT",
+  "stack": "Traceback (most recent call last):\n  File \"<root/projects/htdate-pure/src/htdate_pure/_parser.py\", line 284, in _parse_imf\n    _check_weekday(dt.year, dt.month, dt.day, WEEKDAY_3_TO_INDEX[weekday], text)\n  File \"<root/projects/htdate-pure/src/htdate_pure/_parser.py\", line 119, in _check_weekday\n    raise InvalidFormat(original, reason=\"weekday_mismatch\")\nhtdate_pure.exceptions.InvalidFormat: 'Thu, 30 Jun 1994 23:59:60 GMT': weekday_mismatch\n",
+  "description": "Every IERS-issued end-of-day UTC leap-second is rejected with weekday_mismatch because _check_weekday validates the post-rollover date against the pre-rollover weekday name. Verified live against 7 real historical leap-seconds: 1994-06-30, 1995-12-31, 2005-12-31, 2008-12-31, 2012-06-30, 2015-06-30, 2016-12-31 \u2014 all raise InvalidFormat(weekday_mismatch). Mid-day :60 (e.g. 08:49:60) parses correctly, confirming the bug is specifically the ordering of rollover-then-weekday-check. Fix: check weekday of the pre-rollover date in _parse_imf/_parse_rfc850 before _build_datetime rolls the leap-second (or skip the weekday check when _build_datetime returned a _LeapSecondDatetime).",
+  "status": "VERIFIED",
+  "source": "T01 manual audit; live-verified at HEAD 14295be"
+}

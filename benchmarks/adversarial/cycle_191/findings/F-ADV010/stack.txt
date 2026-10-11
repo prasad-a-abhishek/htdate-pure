@@ -1,0 +1,7 @@
+NUL byte:
+  $ htdate-parse $'before\x00after'
+  ValueError: embedded null byte
+
+1MB argv:
+  python -c "import subprocess; subprocess.run(['htdate-parse', 'x' * (1 << 20)])"
+  OSError: [Errno 7] Argument list too long

@@ -1,0 +1,13 @@
+{
+  "id": "F-ADV-011",
+  "severity": "INFO",
+  "file": "src/htdate_pure/cli.py",
+  "line": null,
+  "function": "main_parse",
+  "surface": "cli",
+  "min_input": "\\x1b[31mRED\\x1b[0m",
+  "stack": "# Verified safe \u2014 escape is repr()-escaped in stderr\n$ htdate-parse $'\\x1b[31mRED\\x1b[0m'\n'\\x1b[31mRED\\x1b[0m': no_matching_dialect\n# rc=2; the literal characters '\\x1b' (4 chars) appear, not the actual ESC\n",
+  "description": "ANSI escape sequences in user input pass through stderr as literal \\x1b[31m... (4-char escape) via Python repr() escaping. No actual terminal injection vector. Verified across htdate-parse, htdate-format, --dialect mode. Safe by construction.",
+  "status": "VERIFIED",
+  "source": "T01 manual audit; live-verified at HEAD 14295be"
+}
