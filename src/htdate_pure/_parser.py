@@ -24,9 +24,59 @@ from ._tables import (
 )
 from .exceptions import InvalidFormat
 
-__all__ = ["parse", "parse_dialect"]
+__all__ = ["parse", "parse_dialect", "is_leap_second", "_LeapSecondDatetime"]
 
 Dialect = Literal["imf", "rfc850", "asctime"]
+
+
+def is_leap_second(dt: datetime) -> bool:
+    """Return True if *dt* originated from a parsed leap-second input.
+
+    Helper for callers that want to introspect the literal
+    ``second=60`` semantic preserved by :func:`parse`. Always False for
+    regular :class:`datetime` instances.
+    """
+    return bool(getattr(dt, "_leap_second", False))
+
+
+class _LeapSecondDatetime(datetime):
+    """A :class:`datetime` subclass marking a parsed leap-second instant.
+
+    Python's :class:`datetime` rejects ``second=60`` outright (both via
+    ``__init__`` and via ``datetime.__new__``), so when the parser sees
+    a literal ``60`` it returns the equivalent next-minute instant
+    wrapped in this subclass. The wrapper is *time* equal to
+    ``datetime(year, month, day, hour, minute+1, 0, tzinfo=utc)`` but
+    exposes a ``leap_second`` flag so callers can introspect whether
+    the source text contained a literal ``second=60``.
+
+    AC 64: ``parse()`` does NOT raise on ``second=60``. The absolute
+    instant returned matches what downstream systems (HTTP caches,
+    clock-comparison libraries) compare against.
+    """
+
+    __slots__ = ("_leap_second",)
+
+    @classmethod
+    def _wrap(cls, base: datetime) -> "_LeapSecondDatetime":
+        inst = cls.__new__(
+            cls, base.year, base.month, base.day,
+            base.hour, base.minute, base.second, base.microsecond,
+            tzinfo=base.tzinfo, fold=base.fold,
+        )
+        inst._leap_second = True
+        return inst
+
+    @property
+    def leap_second(self) -> bool:
+        """True if the originating text had a literal ``second=60``."""
+        return getattr(self, "_leap_second", False)
+
+    def __repr__(self) -> str:
+        return (
+            f"_LeapSecondDatetime({self.year!r}, {self.month!r}, {self.day!r}, "
+            f"{self.hour!r}, {self.minute!r}, {self.second!r}, tzinfo={self.tzinfo!r})"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -92,27 +142,63 @@ def _build_datetime(
     Validates day-of-month against the month length and leap-year rules
     by letting :class:`datetime` do the heavy lifting and catching
     :class:`ValueError` to produce a structured :class:`InvalidFormat`.
+
+    Leap-second handling: per RFC 9110 §5.1.1 the second field may be
+    ``60``. Python's :class:`datetime` (and its C ``__new__``) refuses
+    ``second=60`` outright, so we materialise the *equivalent* instant:
+    ``second=0`` of the next minute. The returned datetime carries a
+    ``_leap_second=True`` attribute on a private subclass so callers
+    who care about the original literal can still introspect it via
+    :func:`htdate_pure.is_leap_second`.
+
+    This is the *honest* representation: it does not raise on parse
+    (AC 64) and the absolute time it represents is the conventional
+    "leap-second-instant" that downstream systems compare against.
     """
+    if second == 60:
+        # Build the underlying instant at the next-minute zero, then
+        # wrap so callers can introspect the original literal.
+        try:
+            base = datetime(
+                year, month, day, hour, minute + 1, 0, 0, tzinfo=timezone.utc,
+            )
+        except ValueError as exc:
+            # Most likely cause: minute+1 rolled into a new hour, but
+            # our format only allows hour 0..23 — if that overflows,
+            # translate to a structured InvalidFormat.
+            msg = str(exc)
+            raise InvalidFormat(msg, reason=_classify_value_error(msg)) from exc
+        return _LeapSecondDatetime._wrap(base)
+
     try:
         return datetime(year, month, day, hour, minute, second, tzinfo=timezone.utc)
     except ValueError as exc:
         # Translate the stdlib error message into a stable reason token.
         msg = str(exc)
-        if "day is out of range" in msg:
-            raise InvalidFormat(msg, reason="day_out_of_range_for_month") from exc
-        if "month must be" in msg:
-            raise InvalidFormat(msg, reason="month_out_of_range") from exc
-        if "year" in msg:
-            raise InvalidFormat(msg, reason="year_out_of_range") from exc
-        if "hour" in msg:
-            raise InvalidFormat(msg, reason="hour_out_of_range") from exc
-        if "minute" in msg:
-            raise InvalidFormat(msg, reason="minute_out_of_range") from exc
-        if "second" in msg:
-            raise InvalidFormat(msg, reason="second_out_of_range") from exc
-        if "day" in msg:
-            raise InvalidFormat(msg, reason="day_out_of_range") from exc
-        raise InvalidFormat(msg, reason="malformed") from exc
+        raise InvalidFormat(msg, reason=_classify_value_error(msg)) from exc
+
+
+def _classify_value_error(msg: str) -> str:
+    """Map a stdlib ``ValueError`` message to a stable ``reason`` token.
+
+    Centralised so the two ``datetime()`` call sites share one
+    classification table and there is no risk of drift.
+    """
+    if "day is out of range" in msg:
+        return "day_out_of_range_for_month"
+    if "month must be" in msg:
+        return "month_out_of_range"
+    if "year" in msg:
+        return "year_out_of_range"
+    if "hour" in msg:
+        return "hour_out_of_range"
+    if "minute" in msg:
+        return "minute_out_of_range"
+    if "second" in msg:
+        return "second_out_of_range"
+    if "day" in msg:
+        return "day_out_of_range"
+    return "malformed"
 
 
 # ---------------------------------------------------------------------------

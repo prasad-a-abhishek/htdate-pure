@@ -31,7 +31,7 @@ the limitations section, and the non-goals list.
 from __future__ import annotations
 
 from ._format import format, to_imf
-from ._parser import parse, parse_dialect
+from ._parser import is_leap_second, parse, parse_dialect
 from .exceptions import InvalidFormat
 
 __version__ = "0.1.0"
@@ -41,6 +41,7 @@ __all__ = [
     "parse_dialect",
     "format",
     "to_imf",
+    "is_leap_second",
     "InvalidFormat",
     "__version__",
 ]
