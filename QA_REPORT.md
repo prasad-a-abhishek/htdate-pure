@@ -1,3 +1,8 @@
+tests_passing: true
+tests_total: 294
+verdict: SHIP
+cycle: 191
+
 # QA Report — htdate-pure v0.1.0 (cycle_191 rerun)
 
 ## 1. Executive summary

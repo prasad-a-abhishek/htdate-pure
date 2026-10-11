@@ -96,7 +96,7 @@ a binary data table dep should still pick `httpdate`.
 - Strict range validation: month 1-12, day 1-31 (with month-aware day
   limits), hour 0-23, minute 0-59, second 0-60, timezone +0000 only
   (per RFC 9110 — "GMT" / "UT" are accepted as aliases)
-- 270 tests across 12 files covering happy path, canonical vectors,
+- 294 tests across 12 files covering happy path, canonical vectors,
   pre-1970, leap seconds, fuzz surfaces, dialect detection, typo
   rejection, roundtrip, packaging, CLI, and format-specific edge cases
 
