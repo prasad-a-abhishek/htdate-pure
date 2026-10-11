@@ -1,0 +1,61 @@
+{
+  "corpus_seeds_per_harness": {
+    "cli_seeds": 26,
+    "format_seeds": 32,
+    "parse_seeds": 40
+  },
+  "corpus_total_seeds": 98,
+  "cycle": "cycle_191",
+  "harnesses": [
+    {
+      "crash_files": [],
+      "crashes_count": 0,
+      "elapsed_s": 0.37,
+      "exit_code": 0,
+      "hangs_count": 0,
+      "iters_run": 100000,
+      "iters_target": 100000,
+      "log_path": "logs/harness_parse.log",
+      "name": "parse",
+      "oom_count": 0,
+      "timed_out": false
+    },
+    {
+      "crash_files": [
+        "/root/projects/htdate-pure/benchmarks/adversarial/cycle_191/crashes/format/9b447f9a335a8085.txt"
+      ],
+      "crashes_count": 1,
+      "elapsed_s": 0.01758237462490797,
+      "exit_code": 1,
+      "hangs_count": 0,
+      "iters_run": 4,
+      "iters_target": 100000,
+      "log_path": "logs/harness_format.log",
+      "name": "format",
+      "oom_count": 0,
+      "timed_out": false
+    },
+    {
+      "crash_files": [],
+      "crashes_count": 0,
+      "elapsed_s": 18.34,
+      "exit_code": 0,
+      "hangs_count": 0,
+      "iters_run": 1000,
+      "iters_target": 1000,
+      "log_path": "logs/harness_cli.log",
+      "name": "cli",
+      "oom_count": 0,
+      "timed_out": false
+    }
+  ],
+  "phase": "adversary/T03",
+  "totals": {
+    "crashes_total": 1,
+    "hangs_total": 0,
+    "iters_total": 101004,
+    "oom_total": 0
+  },
+  "wall_timeout_s": 60,
+  "wall_total_s": 18.728
+}

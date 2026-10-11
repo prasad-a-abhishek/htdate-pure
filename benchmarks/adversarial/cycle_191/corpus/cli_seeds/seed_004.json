@@ -1,0 +1,8 @@
+{
+  "_encoding": "argv",
+  "argv": [
+    "htdate-parse",
+    "--dialect=rfc850",
+    "Sunday, 06-Nov-94 08:49:37 GMT"
+  ]
+}

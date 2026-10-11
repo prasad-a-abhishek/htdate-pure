@@ -1,0 +1,8 @@
+{
+  "_encoding": "argv",
+  "argv": [
+    "htdate-format",
+    "-d",
+    "2024-01-31T23:59:00+00:00"
+  ]
+}

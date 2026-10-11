@@ -1,0 +1,7 @@
+{
+  "_encoding": "argv",
+  "argv": [
+    "htdate-parse",
+    "--dialect=invalid_value"
+  ]
+}

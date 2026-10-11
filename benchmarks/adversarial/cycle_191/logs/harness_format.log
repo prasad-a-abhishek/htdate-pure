@@ -1,0 +1,16 @@
+# command:   /usr/local/bin/python3 /root/projects/htdate-pure/benchmarks/adversarial/cycle_191/fuzz/harness_format.py
+# timeout_s: 60
+# iters:     100000
+# exit:      1
+# timed_out: False
+# elapsed_s: 0.018
+# ---- STDOUT ----
+
+# ---- STDERR ----
+
+==============================================================================
+CRASH at iteration 4 (0.00s into fuzz)
+  op:        to_imf
+  exception: AttributeError: 'str' object has no attribute 'tzinfo'
+  payload:   'Sun, 06 Nov 1994 08:49:37 GMT'
+==============================================================================

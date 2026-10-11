@@ -1,0 +1,8 @@
+{
+  "_encoding": "argv",
+  "argv": [
+    "htdate-format",
+    "--assume-utc",
+    "--now"
+  ]
+}

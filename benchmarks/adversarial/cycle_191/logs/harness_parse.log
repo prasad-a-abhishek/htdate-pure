@@ -1,0 +1,9 @@
+# command:   /usr/local/bin/python3 /root/projects/htdate-pure/benchmarks/adversarial/cycle_191/fuzz/harness_parse.py
+# timeout_s: 60
+# iters:     100000
+# exit:      0
+# timed_out: False
+# elapsed_s: 0.386
+# ---- STDOUT ----
+OK: 100000 iters (0.37s) — no crashes across 4 operations x 60-seed corpus
+# ---- STDERR ----

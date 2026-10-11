@@ -1,0 +1,9 @@
+# command:   /usr/local/bin/python3 /root/projects/htdate-pure/benchmarks/adversarial/cycle_191/fuzz/harness_cli.py
+# timeout_s: 60
+# iters:     1000
+# exit:      0
+# timed_out: False
+# elapsed_s: 18.426
+# ---- STDOUT ----
+OK: 1000 iters (18.34s) — no CLI crashes
+# ---- STDERR ----
