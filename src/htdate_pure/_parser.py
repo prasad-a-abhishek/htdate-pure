@@ -156,16 +156,17 @@ def _build_datetime(
     "leap-second-instant" that downstream systems compare against.
     """
     if second == 60:
-        # Build the underlying instant at the next-minute zero, then
-        # wrap so callers can introspect the original literal.
+        # Build the underlying instant at the next-minute zero. We add
+        # a ``timedelta(seconds=60)`` rather than computing ``minute+1``
+        # so the rollover cascades correctly across hour/day/month/year
+        # boundaries (e.g. 23:59:60, 28 Feb 23:59:60).
+        from datetime import timedelta
         try:
-            base = datetime(
-                year, month, day, hour, minute + 1, 0, 0, tzinfo=timezone.utc,
+            base_dt = datetime(
+                year, month, day, hour, minute, 0, 0, tzinfo=timezone.utc,
             )
+            base = base_dt + timedelta(seconds=60)
         except ValueError as exc:
-            # Most likely cause: minute+1 rolled into a new hour, but
-            # our format only allows hour 0..23 — if that overflows,
-            # translate to a structured InvalidFormat.
             msg = str(exc)
             raise InvalidFormat(msg, reason=_classify_value_error(msg)) from exc
         return _LeapSecondDatetime._wrap(base)
@@ -445,13 +446,31 @@ def parse_dialect(text: object) -> Dialect | None:
     s = _strip_trailing_ws(s)
     if not s:
         return None
-    if _parse_imf(s) is not None:
-        return "imf"
-    if _parse_rfc850(s) is not None:
-        return "rfc850"
-    if _parse_asctime(s) is not None:
-        return "asctime"
+    if s[0] in (" ", "\t"):
+        # Leading whitespace fails all dialects.
+        return None
+    # Try each dialect. Each helper may raise InvalidFormat for
+    # semantic errors (weekday mismatch, etc.) — but ``parse_dialect``
+    # only cares about *grammar*, so we swallow the structured errors
+    # and try the next dialect.
+    for parser in (_parse_imf, _parse_rfc850, _parse_asctime):
+        try:
+            if parser(s) is not None:
+                return _dialect_name(parser)
+        except InvalidFormat:
+            continue
     return None
+
+
+def _dialect_name(parser) -> Dialect:
+    """Map a parser function to its dialect name. Used by ``parse_dialect``."""
+    if parser is _parse_imf:
+        return "imf"
+    if parser is _parse_rfc850:
+        return "rfc850"
+    if parser is _parse_asctime:
+        return "asctime"
+    raise RuntimeError(f"unknown parser: {parser}")
 
 
 def parse(text: object) -> datetime:
