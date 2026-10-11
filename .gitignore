@@ -1,0 +1,44 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+pip-wheel-metadata/
+htmlcov/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.tox/
+.venv*/
+venv/
+env/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Build outputs and local-only benchmark artifacts
+benchmarks/.venv_competitor/
+benchmarks/*.csv
+benchmarks/*.json
+benchmarks/*.log
+/tmp_*.py
+/tmp_*.txt
+
+# Local coverage reports
+coverage.xml
+.coverage.*

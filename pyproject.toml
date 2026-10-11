@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "htdate-pure"
+version = "0.1.0"
+description = "Zero-dependency, 100%-stdlib HTTP-date parser/serializer for Python 3.11+ (RFC 9110 §5.1.1, all three formats)."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+authors = [
+    {name = "Abhishek Prasad", email = "prasad.a.abhishek@example.com"},
+]
+keywords = [
+    "http-date",
+    "rfc1123",
+    "rfc7231",
+    "rfc9110",
+    "imf-fixdate",
+    "rfc850",
+    "asctime",
+    "http-header",
+    "pure-python",
+    "zero-dependency",
+    "stdlib",
+    "serverless",
+    "pyodide",
+    "wasm",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+# Zero runtime dependencies — stdlib only.
+dependencies = []
+
+[project.scripts]
+htdate-parse = "htdate_pure.cli:main_parse"
+htdate-format = "htdate_pure.cli:main_format"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+minversion = "7.4"
+addopts = "-ra -q --strict-markers"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
