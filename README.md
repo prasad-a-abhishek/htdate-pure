@@ -73,17 +73,16 @@ practice. Three options exist today and none is fully satisfactory:
   hand-format the right `strptime` strings, but locale dependence makes
   it brittle, and there is no `format()` inverse for IMF-fixdate output.
 
-`htdate-pure` covers all three RFC 9110 §5.1.1 formats, raises typed
-errors (`InvalidFormat`, `OutOfRange`, `InvalidMonthName`,
-`InvalidTimezone`, `InvalidLeapSecond`) on every malformed input, uses
-only `re` + `datetime` + `calendar` from the standard library, ships a
-symmetric `format()` that always emits IMF-fixdate, and exposes CLIs
-that match the lib API. The trade-off is honest: we re-implement ~150
-lines of date arithmetic that `httpdate` gets from `leapseconds`, and
-our leap-second policy is to clamp `:60` to `:59` with a warning rather
-than tracking the IERS table. Users who need strict IERS-tracked
-leap-second support and can tolerate a binary data table dep should
-still pick `httpdate`.
+`htdate-pure` covers all three RFC 9110 §5.1.1 formats, raises a typed
+`InvalidFormat` exception (with a stable `.reason` token describing the
+failure class) on every malformed input, uses only `re` + `datetime` +
+`calendar` from the standard library, ships a symmetric `format()` that
+always emits IMF-fixdate, and exposes CLIs that match the lib API. The
+trade-off is honest: we re-implement ~150 lines of date arithmetic that
+`httpdate` gets from `leapseconds`, and our leap-second policy is to
+clamp `:60` to `:59` with a warning rather than tracking the IERS table.
+Users who need strict IERS-tracked leap-second support and can tolerate
+a binary data table dep should still pick `httpdate`.
 
 ## Key Features & Complete API / CLI Reference
 
@@ -105,15 +104,12 @@ still pick `httpdate`.
 
 ```python
 from htdate_pure import (
-    parse,                 # parse any of the 3 HTTP-date formats
-    format,                # emit IMF-fixdate (always)
-    parse_dialect,         # (datetime, dialect_name) — dialect detection
-    is_leap_second,        # True if seconds field was :60
-    InvalidFormat,         # raised on shape / pattern errors
-    OutOfRange,            # raised on numeric out-of-range values
-    InvalidMonthName,      # raised on unrecognised month name (RFC 850)
-    InvalidTimezone,       # raised on non-GMT timezone
-    InvalidLeapSecond,     # raised on :60 outside a known leap-second UTC
+    parse,            # parse any of the 3 HTTP-date formats
+    format,           # emit IMF-fixdate (always)
+    to_imf,           # alias of format() — clearer name at call sites
+    parse_dialect,    # detect which of the 3 formats matched -> "imf" | "rfc850" | "asctime" | None
+    is_leap_second,   # True if the seconds field was :60
+    InvalidFormat,    # raised on shape / pattern / range errors (subclass of ValueError)
 )
 ```
 
@@ -126,13 +122,17 @@ from htdate_pure import parse, format, parse_dialect
 dt = parse("Sun, 06 Nov 1994 08:49:37 GMT")
 format(dt)                       # 'Sun, 06 Nov 1994 08:49:37 GMT'
 
-# RFC 850 (obs-date)
-dt, dialect = parse_dialect("Sunday, 06-Nov-94 08:49:37 GMT")
+# RFC 850 (obs-date) — parse_dialect returns the dialect name (str | None),
+# NOT a (dt, dialect) tuple. Call parse() to get the datetime.
+dialect = parse_dialect("Sunday, 06-Nov-94 08:49:37 GMT")
 assert dialect == "rfc850"
 
 # asctime
-dt, dialect = parse_dialect("Sun Nov  6 08:49:37 1994")
+dialect = parse_dialect("Sun Nov  6 08:49:37 1994")
 assert dialect == "asctime"
+
+# Unknown input -> None (no exception raised)
+assert parse_dialect("not a date at all") is None
 
 # Pre-1970
 parse("Fri, 31 Dec 1909 12:00:00 GMT")   # 1909-12-31 12:00:00+00:00
@@ -159,18 +159,43 @@ htdate-format -d today
 
 ### Errors
 
-| Exception           | Trigger                                        |
-|---------------------|------------------------------------------------|
-| `InvalidFormat`     | shape doesn't match any of the 3 formats        |
-| `InvalidMonthName`  | unrecognised 3-letter month abbreviation       |
-| `OutOfRange`        | month/day/hour/minute/second out of bounds     |
-| `InvalidTimezone`   | timezone designator is not GMT / UT / +0000    |
-| `InvalidLeapSecond` | `:60` second field outside a declared leap day  |
+The package raises a single typed exception, `InvalidFormat`, on every
+malformed input. It is also a subclass of `ValueError` so existing
+callers that catch `ValueError` continue to work without modification.
+
+| Failure mode (RFC 9110 §5.1.1)           | `InvalidFormat.reason` token        |
+|------------------------------------------|-------------------------------------|
+| shape does not match any of the 3 formats | `no_matching_dialect`               |
+| weekday name does not match the date     | `weekday_mismatch`                  |
+| month is not 01-12                       | `month_out_of_range`                |
+| day outside the month's valid range      | `day_out_of_range_for_month`        |
+| day is non-numeric / out of 01-31        | `day_out_of_range`                  |
+| hour / minute / second out of range      | `hour_out_of_range` / `_minute_` / `_second_` |
+| year outside 1900-2099                   | `year_out_of_range`                 |
+| 3-letter month abbreviation not in table | `invalid_month_name`                |
+| weekday name not Sun-Sat                 | `invalid_weekday_name`              |
+| timezone designator is not GMT / UT      | `invalid_timezone_literal`          |
+| missing timezone designator              | `missing_timezone`                  |
+| input is `None`, not a `str`, or empty   | `type_error` / `empty`              |
+
+`InvalidFormat` exposes `.value` (the original input, unaltered) and
+`.reason` (the stable machine-readable token from the table above) so
+callers can react programmatically:
+
+```python
+from htdate_pure import parse, InvalidFormat
+
+try:
+    parse("Mon, 06 Nov 1994 08:49:37 GMT")  # Mon is wrong — 06 Nov 1994 was Sun
+except InvalidFormat as exc:
+    assert exc.reason == "weekday_mismatch"
+    assert exc.value == "Mon, 06 Nov 1994 08:49:37 GMT"
+```
 
 All public functions are exception-safe: malformed inputs, `None`,
 empty strings, oversized payloads, and unclosed brackets never raise
-`ValueError` / `TypeError` / `AttributeError` — they raise one of the
-typed exceptions above so callers can `try / except InvalidFormat`
+`TypeError` or `AttributeError` — they raise `InvalidFormat`
+(equivalently `ValueError`) so callers can `try / except InvalidFormat`
 cleanly.
 
 ## License

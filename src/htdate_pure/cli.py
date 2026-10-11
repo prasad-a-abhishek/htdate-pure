@@ -156,12 +156,12 @@ def _parse_iso8601(text: str, *, assume_utc: bool) -> datetime:
     try:
         dt = datetime.fromisoformat(s)
     except ValueError as exc:
-        raise SystemExit(
-            f"{__file__}: invalid ISO-8601 input: {text!r}: {exc}"
+        raise ValueError(
+            f"invalid ISO-8601 input: {text!r}: {exc}"
         ) from exc
     if dt.tzinfo is None and not assume_utc:
-        raise SystemExit(
-            f"{__file__}: naive ISO-8601 input requires --assume-utc (got {text!r})"
+        raise ValueError(
+            f"naive ISO-8601 input requires --assume-utc (got {text!r})"
         )
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
